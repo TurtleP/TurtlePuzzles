@@ -1,2 +1,2 @@
 # TurtlePuzzles
-The Legacy: My First Love2D Game
+Runs on Love2D 0.8.x.
