@@ -1,0 +1,30 @@
+for j, w in pairs(objects) do	
+			if j ~= "tile" then
+				for i, v in pairs(w) do
+					if v.drawhat then
+					local offsets = {}
+					if v.dying == false then
+						offsets = hatoffsets["all"]
+					end
+					if #v.hats > 0 then
+						
+					end
+				end
+			end
+		end
+	end
+	
+--hatconfigs 
+
+local i
+hat = {}
+hatoffsets = {}
+hatoffsets["all"] = {0, 0}
+
+i = 1
+hat[i] = {}
+hat[i].x = 7
+hat[i].y = 2
+hat[i].height = 2
+hat[i].graphic = love.graphics.newImage("graphics/hats/pot.png");hat[i].graphic:setFilter("nearest", "nearest")
+hat[i].name = "Pot"
