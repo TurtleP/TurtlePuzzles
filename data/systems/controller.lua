@@ -2,6 +2,12 @@ local concord = require("libraries.concord")
 
 local ControllerSystem = concord.system({pool = {"position", "velocity", "controller"}})
 
+function ControllerSystem:update(dt)
+    for _, entity in ipairs(self.pool) do
+        entity.controller:update(dt)
+    end
+end
+
 function ControllerSystem:gamepadaxis(axis, value)
     for _, entity in ipairs(self.pool) do
         entity.controller:gamepadaxis(entity, axis, value)

@@ -6,7 +6,7 @@ local extensions =
     mathx      = require(path .. ".mathx"),
     stringx    = require(path .. ".stringx"),
     tablex     = require(path .. ".tablex"),
-    functional = require(path .. ".functional")
+
 }
 
 local aliases =
@@ -21,6 +21,8 @@ for _, alias in ipairs(aliases) do
 end
 
 local batteries = {}
+batteries.functional = require(path .. ".functional")
+batteries.timer      = require(path .. ".timer")
 
 function batteries:export()
     --export all key strings globally, if doesn't always exist

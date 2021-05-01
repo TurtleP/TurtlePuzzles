@@ -13,10 +13,6 @@ function game:enter(_, map)
     self.world = concord.world()
     self.world:addSystem(systems.physics)
 
-    self.world.onEntityAdded = function(_, e)
-        self.world:getSystem(systems.physics):onEntityAdded(e)
-    end
-
     for _, screen in ipairs({"top", "bottom"}) do
         local mapData = tiled.getMap(screen)
 
@@ -28,6 +24,7 @@ function game:enter(_, map)
     end
 
     self.world:addSystem(systems.controller)
+    self.world:addSystem(systems.animation)
 end
 
 function game:update(dt)
@@ -36,12 +33,15 @@ function game:update(dt)
 end
 
 function game:drawTop(depth)
-    tiled.drawTop()
-    self.world:emit("draw")
+    tiled.drawTop(function()
+        self.world:emit("draw", "top")
+    end)
 end
 
 function game:drawBottom()
-    tiled.drawBottom()
+    tiled.drawBottom(function()
+        self.world:emit("draw", "bottom")
+    end)
 end
 
 function game:gamepadpressed(_, button)

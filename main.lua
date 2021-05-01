@@ -9,6 +9,8 @@ core = require("data.core")
 local state = require("states")
 local save  = require("data.core.save")
 
+love.graphics.setDefaultFilter("nearest", "nearest")
+
 function love.load()
     state:init()
 

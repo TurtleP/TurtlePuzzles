@@ -33,8 +33,7 @@ function Map:new(name, size, layers, properties)
     self.height = size.height
 
     self.player = nil
-    self.camera = camera(0, 0, 1.25, 0)
-    self:setCameraTarget({position = {x = 0, y = 0}})
+    self.camera = camera(0, 0, 1.50, 0)
 
     -- dummy this
 
@@ -81,18 +80,23 @@ function Map:setCameraTarget(target)
     self.target = target
 end
 
+local target = {}
 function Map:updateCamera()
     if not self.target then
         return
     end
 
+    if self.target.screen.name ~= self.screen then
+        return
+    end
+
+    local wvw = self.width  / (2 * self.camera.scale)
+    local wvh = self.windowSize.height / (2 * self.camera.scale)
+
     local x, y = self.target.position.x, self.target.position.y
 
-    local wvw, wvh = self.windowSize.width / (2 * self.camera.scale), self.windowSize.height / (2 * self.camera.scale)
-    local dx, dy   = x - self.camera.x, y - self.camera.y
-
-    self.camera.x = math.clamp(self.camera.x + dx / 2, 0 + wvw, self.width  - wvw)
-    self.camera.y = math.clamp(self.camera.y + dy / 2, 0 + wvh, self.height - wvh)
+    self.camera:lookAt(x, y)
+    self.camera.x = math.clamp(self.camera.x, -wvw, wvw)
 end
 
 function Map:update(dt)
@@ -105,7 +109,7 @@ function Map:debugDraw()
     end
 end
 
-function Map:draw()
+function Map:draw(wrapper)
     self.camera:attach()
 
     love.graphics.draw(self.background)
@@ -113,6 +117,10 @@ function Map:draw()
 
     if DEBUG_DRAW then
         self:debugDraw()
+    end
+
+    if wrapper then
+        wrapper()
     end
 
     self.camera:detach()

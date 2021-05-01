@@ -5,10 +5,10 @@ local Physics = concord.system({pool = {"position", "size"}})
 
 function Physics:init()
     self.world = bump.newWorld(16)
-end
 
-function Physics:onEntityAdded(entity)
-    self.world:add(entity, entity.position.x, entity.position.y, entity.size.width, entity.size.height)
+    self.pool.onEntityAdded = function(_, entity)
+        self.world:add(entity, entity.position.x, entity.position.y, entity.size.width, entity.size.height)
+    end
 end
 
 -- other filter instructions

@@ -63,15 +63,15 @@ function tiled.update(dt)
     end
 end
 
-function tiled.drawTop()
+function tiled.drawTop(wrapper)
     if tiled.currentMap then
-        tiled.currentMap.top:draw()
+        tiled.currentMap.top:draw(wrapper)
     end
 end
 
-function tiled.drawBottom()
+function tiled.drawBottom(wrapper)
     if tiled.currentMap and tiled.currentMap.bottom then
-        tiled.currentMap.bottom:draw()
+        tiled.currentMap.bottom:draw(wrapper)
     end
 end
 
