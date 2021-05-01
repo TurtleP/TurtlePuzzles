@@ -1,13 +1,10 @@
 local collisions = {}
 
 collisions.floor = function(this, other)
-    if this.state:wasAnyOf("jump", "punch") then
-        if this.velocity.x == 0 then
-            this.state:set("idle")
-        else
-            this.state:set("walk")
-        end
+    if this.state:was("jump") then
+        this.state:unlock()
     end
+    return false
 end
 
 local playerTexure = love.graphics.newImage("assets/graphics/game/player.png")

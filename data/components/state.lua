@@ -42,6 +42,22 @@ local function canSwitch(current, ignore)
     return true
 end
 
+-- lock state to current
+function State:lock(before, locked)
+    self.lockedState = before
+    self.locked = locked
+end
+
+-- release state
+function State:unlock()
+    self.locked = false
+    self:set(self.lockedState)
+end
+
+function State:isLocked()
+    return self.locked
+end
+
 function State:was(name)
     return self.current == name
 end
@@ -56,10 +72,12 @@ function State:wasAnyOf(...)
     return false
 end
 
-function State:set(to, ignore)
-    ignore = ignore or {}
-    if self.current ~= to and canSwitch(self.current, ignore) then
+function State:set(to, shouldLock)
+    local before = self.current
+
+    if self.current ~= to and not self:isLocked() then
         self.current = to
+        self:lock(before, shouldLock)
     end
     return self
 end

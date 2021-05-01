@@ -26,7 +26,7 @@ concord.utils.loadNamespace("data/entities", entities)
     Player
 ]]
 
-local DEBUG_DRAW = true
+local DEBUG_DRAW = false
 
 function Map:new(name, size, layers, properties)
     self.width  = size.width
