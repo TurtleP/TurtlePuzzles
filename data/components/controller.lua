@@ -1,7 +1,9 @@
 local concord = require("libraries.concord")
+local core    = require("data.core")
 
-local Controller = concord.component("controller", function()
-end)
+local sound = core.sounds
+
+local Controller = concord.component("controller")
 
 local __PLAYER_SPEED__ = 75
 local __PUNCH_TIMER__ = nil
@@ -39,6 +41,7 @@ function Controller:gamepadpressed(entity, button)
     if button == "a" then
         if entity.velocity.y == 0 then
             entity.state:set("jump", {"punch"})
+            sound.play("jump")
             entity.velocity.y = -160
         end
     elseif button == "b" then
@@ -48,6 +51,7 @@ function Controller:gamepadpressed(entity, button)
                 entity.velocity.x = (100 * entity.state.direction)
             end
             entity.state:set("punch")
+            sound.play("charge")
             __PUNCH_TIMER__ = timer:new(1, nil, function()
                 entity.state:pop(entity)
             end)
