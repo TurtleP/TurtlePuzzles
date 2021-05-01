@@ -42,7 +42,7 @@ function textures.init()
     textures.game = {}
 
     textures.game.gems = love.graphics.newImage(path .. "/menu/gems.png")
-    textures.game.gemQuads = generateQuads(4, textures.game.gems, 11, 10, 16)
+    textures.game.gemQuads = generateQuads(4, textures.game.gems, 9, 8, 13)
 
     textures.inited = true
     return textures

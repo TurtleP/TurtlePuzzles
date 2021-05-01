@@ -33,15 +33,6 @@ function State:setDirection(direction)
     end
 end
 
-local function canSwitch(current, ignore)
-    for index = 1, #ignore do
-        if current == ignore[index] then
-            return false
-        end
-    end
-    return true
-end
-
 -- lock state to current
 function State:lock(before, locked)
     self.lockedState = before
