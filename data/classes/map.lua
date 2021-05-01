@@ -29,7 +29,7 @@ concord.utils.loadNamespace("data/entities", entities)
 local DEBUG_DRAW = true
 
 function Map:new(name, size, layers, properties)
-    self.width = size.width
+    self.width  = size.width
     self.height = size.height
 
     self.player = nil
@@ -90,13 +90,13 @@ function Map:updateCamera()
         return
     end
 
-    local wvw = self.width  / (2 * self.camera.scale)
-    local wvh = self.windowSize.height / (2 * self.camera.scale)
+    local s = 1 / self.camera.scale -- zoom or scale of the camera
 
-    local x, y = self.target.position.x, self.target.position.y
+    local wvw, wvh = self.windowSize.width / (2 * self.camera.scale), self.windowSize.height / (2 * self.camera.scale)
+    local dx, dy = self.target.position.x - self.camera.x, self.target.position.y - self.camera.y
 
-    self.camera:lookAt(x, y)
-    self.camera.x = math.clamp(self.camera.x, -wvw, wvw)
+    self.camera.x = math.clamp(self.camera.x + dx / 2, 0 + wvw, self.width  - wvw)
+    self.camera.y = math.clamp(self.camera.y + dy / 2, 0 + wvh, self.height - wvh)
 end
 
 function Map:update(dt)

@@ -31,7 +31,7 @@ function tiled.loadMap(name)
     assert:type(name, "string")
     local mapData = assert:type(tiled.maps[name], "table")
 
-    local mapSize = {width = mapData.width + 4 * 16, height = mapData.height * 16}
+    local mapSize = {width = mapData.width * 16, height = mapData.height * 16}
 
     tiled.currentMap = {}
 
