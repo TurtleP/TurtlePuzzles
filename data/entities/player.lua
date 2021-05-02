@@ -1,27 +1,71 @@
 local collisions = {}
 
 collisions.floor = function(this, other)
+    print(this.state.current)
     if this.state:is("jump") then
         this.state:unlock()
     end
+
+    if other:has("climbable") then
+        if this.position:getY() < other.position.y then
+            if this.controller:moving("down") or this.controller:isOnLadder() then
+                return true
+            end
+        else
+            if not this.controller:isOnLadder() then
+                return true
+            end
+        end
+    else
+        -- this.controller:setLadder(nil)
+    end
+
     return false
 end
 
-collisions.passive = function(this, other)
+collisions.left = function(this, other)
     if other:has("climbable") then
-        if this:has("climbing") then
-            this.climbing:set(other)
-            if this.state:was("climb") then
-                this.velocity:setGravity(0)
-            end
-        else
-            this:give("canclimb")
-        end
+        return true
     end
+end
+
+collisions.right = function(this, other)
+    if other:has("climbable") then
+        return true
+    end
+end
+
+collisions.ceil = function(this, other)
+    if other:has("climbable") then
+        return true
+    end
+end
+
+collisions.passive = function(this, other)
+
 end
 
 local function onUpdate(state, this, dt)
 
+end
+
+--[[
+ladders should be passive if colliding, and:
+- have no ladder object
+- not passive
+--]]
+local function mask(this, other)
+    if other.name.value == "tile" then
+        if not other:has("climbable") then
+            return "slide"
+        else
+            local position = this.position
+            if this.controller:isOnLadder() or position:getY() > other.position:getY() then
+                return "cross"
+            end
+            return "slide"
+        end
+    end
 end
 
 local playerTexure = love.graphics.newImage("assets/graphics/game/player.png")
@@ -69,18 +113,9 @@ local function Player(entity, screen, x, y)
     :give("position", x, y)
     :give("size", 12, 20)
     :give("velocity")
-    :give("mask", function(this, other)
-        if other.name.value == "tile" then
-            if not this.state:is("climb") then
-                return "slide"
-            end
-            return false
-        elseif other.name.value == "ladder" then
-            return "cross"
-        end
-    end)
+    :give("mask", mask)
     :give("controller")
-    :give("state", "idle", onUpdate)
+    :give("state", "idle")
     :give("collision", collisions)
     :give("animation", playerTexure, playerQuads)
 end

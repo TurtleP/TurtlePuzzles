@@ -9,7 +9,7 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextlayerid = 4,
-  nextobjectid = 9,
+  nextobjectid = 17,
   properties = {},
   tilesets = {
     {
@@ -122,7 +122,7 @@ return {
           shape = "rectangle",
           x = 128,
           y = 64,
-          width = 144,
+          width = 32,
           height = 32,
           rotation = 0,
           visible = true,
@@ -181,30 +181,60 @@ return {
           properties = {}
         },
         {
-          id = 7,
-          name = "ladder",
+          id = 9,
+          name = "tile",
           type = "",
           shape = "rectangle",
-          x = 224,
-          y = 63,
-          width = 16,
-          height = 130,
+          x = 176,
+          y = 64,
+          width = 48,
+          height = 32,
           rotation = 0,
           visible = true,
           properties = {}
         },
         {
-          id = 8,
-          name = "ladder",
+          id = 10,
+          name = "tile",
           type = "",
           shape = "rectangle",
-          x = 160,
-          y = 63,
-          width = 16,
-          height = 130,
+          x = 240,
+          y = 64,
+          width = 32,
+          height = 32,
           rotation = 0,
           visible = true,
           properties = {}
+        },
+        {
+          id = 11,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 160,
+          y = 64,
+          width = 16,
+          height = 128,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["ladder"] = true
+          }
+        },
+        {
+          id = 12,
+          name = "tile",
+          type = "",
+          shape = "rectangle",
+          x = 224,
+          y = 64,
+          width = 16,
+          height = 128,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["ladder"] = true
+          }
         }
       }
     }

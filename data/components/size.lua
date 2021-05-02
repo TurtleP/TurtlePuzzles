@@ -1,6 +1,14 @@
 local concord = require("libraries.concord")
 
-concord.component("size", function(component, width, height)
+local Size = concord.component("size", function(component, width, height)
     component.width  = width
     component.height = height
 end)
+
+function Size:getWidth()
+    return self.width
+end
+
+function Size:getHeight()
+    return self.height
+end

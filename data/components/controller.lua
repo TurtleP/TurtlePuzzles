@@ -10,7 +10,7 @@ local PlayerController = concord.component("controller", function(component)
     end
 
     component.onLadder = false
-    component.current  = nil
+    component.lastLadder = nil
 end)
 
 -- Set @direction (string) to @move (bool)
@@ -21,6 +21,7 @@ function PlayerController:move(direction, move)
     self[direction] = move
 end
 
+-- check if @direction is in use or not
 function PlayerController:moving(direction)
     assert:type(direction, "string")
     assert:type(self[direction], "boolean")
@@ -28,6 +29,19 @@ function PlayerController:moving(direction)
     return self[direction]
 end
 
+-- check if on a ladder
+function PlayerController:isOnLadder()
+    return self.onLadder
+end
+
+function PlayerController:getLadder()
+    return self.lastLadder
+end
+
+function PlayerController:setLadder(object)
+    self.lastLadder = object
+    self.onLadder = (object ~= nil)
+end
 
 --[[
     OLD CODE BELOW --

@@ -5,7 +5,7 @@ local Animation = concord.system({pool = {"position", "animation", "state"}})
 function Animation:update(dt)
     for _, entity in ipairs(self.pool) do
         if not entity.animation.quads[entity.state.current] then
-            error("Cannot animate entity .. '" .. entity.name.value .. "'! State '" .. tostring(entity.state.current) .. "' does not exist!")
+            error("Cannot animate entity '" .. entity.name.value .. "'! State '" .. tostring(entity.state.current) .. "' does not exist!")
         end
         local rate = entity.animation.quads[entity.state.current .. "Rate"] or 8
 

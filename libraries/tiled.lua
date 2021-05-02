@@ -60,6 +60,51 @@ function tiled.getEntities(screen)
     return map:getEntities()
 end
 
+local function aabb(x, y, width, height, otherX, otherY, otherWidth, otherHeight)
+	return x + width > otherX      and
+           x < otherX + otherWidth and
+           y + height > otherY     and
+           y < otherY + otherHeight
+end
+
+function tiled.checkRectangle(screen, x, y, width, height, list)
+    local entities          =  tiled.getEntities(screen)
+    local result, exclude   = {}, nil
+
+    if type(list[1]) == "table" and table.front(list[1]) == "exclude" then
+        exclude = list[1][2]
+        table.shift(list)
+    end
+
+    for _, entity in ipairs(entities) do
+        local hasObject = false
+        for index = 1, #list do
+            if list[index] == entity.name.value then
+                hasObject = true
+            end
+        end
+
+        if hasObject then
+            for _, other in ipairs(entities) do
+                local skip = false
+                if exclude then
+                    if other.position == exclude.position then
+                        skip = true
+                    end
+                end
+
+                if not skip then
+                    if aabb(x, y, width, height, other.position.x, other.position.y, other.size.width, other.size.height) then
+                        table.insert(result, other)
+                    end
+                end
+            end
+        end
+    end
+
+    return result
+end
+
 function tiled.update(dt)
     if tiled.currentMap then
         for _, value in pairs(tiled.currentMap) do

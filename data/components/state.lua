@@ -3,17 +3,12 @@ local concord = require("libraries.concord")
 local __NULL__ = function(_, _)
 end
 
-local State = concord.component("state", function(component, default, onUpdate)
+local State = concord.component("state", function(component, default)
     component.current = default or "" -- default?
-    component.run = onUpdate or __NULL__
     component.direction = 1
 
     component.storedData = nil
 end)
-
-function State:update(entity, dt)
-    self.run(self, entity, dt)
-end
 
 function State:store(entity)
     self.storedData = {entity.velocity.x, entity.velocity.y, entity.state.current}
@@ -42,7 +37,10 @@ end
 -- release state
 function State:unlock()
     self.locked = false
-    self:set(self.lockedState)
+
+    if self.lockedState then
+        self:set(self.lockedState)
+    end
 end
 
 function State:isLocked()

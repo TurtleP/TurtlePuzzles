@@ -57,14 +57,13 @@ function Map:loadEntities(layerData)
 
     for _, entityData in ipairs(layerData) do
         local name, entity = entityData.name, concord.entity()
+        local properties   = entityData.properties
 
         if name == "tile" then
-            entity:assemble(entities.tile,   self.screen, entityData.x, entityData.y, entityData.width, entityData.height)
+            entity:assemble(entities.tile,   self.screen, entityData.x, entityData.y, entityData.width, entityData.height, properties)
         elseif name == "spawn" then
             entity:assemble(entities.player, self.screen, entityData.x, entityData.y)
             self:setCameraTarget(entity)
-        elseif name == "ladder" then
-            entity:assemble(entities.ladder, self.screen, entityData.x, entityData.y, entityData.width, entityData.height)
         end
 
         table.insert(self.entities, entity)

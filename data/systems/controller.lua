@@ -3,7 +3,9 @@ local concord = require("libraries.concord")
 local core    = require("data.core")
 local sound   = core.sounds
 
-local PlayerControllerSystem = concord.system({pool = {"position", "velocity", "controller"}})
+local tiled   = require("libraries.tiled")
+
+local PlayerControllerSystem = concord.system({pool = {"position", "size", "velocity", "controller"}})
 
 local __PLAYER__       = nil
 local __PUNCH_TIMER__  = nil
@@ -15,6 +17,8 @@ local controller = nil
 local state      = nil
 local velocity   = nil
 local animation  = nil
+local size       = nil
+local position   = nil
 
 function PlayerControllerSystem:init(world)
     self.pool.onEntityAdded = function(_, entity)
@@ -25,6 +29,39 @@ function PlayerControllerSystem:init(world)
             state      = __PLAYER__.state
             velocity   = __PLAYER__.velocity
             animation  = __PLAYER__.animation
+            size       = __PLAYER__.size
+            position   = __PLAYER__.position
+        end
+    end
+end
+
+function PlayerControllerSystem:dropLadder()
+    if controller:isOnLadder() then
+        velocity:resetGravity()
+        velocity:setY(0)
+
+        controller:getLadder():remove("passive")
+        controller:setLadder(nil)
+    end
+end
+
+function PlayerControllerSystem:checkLadder(ladder)
+    if not controller:isOnLadder() then
+        local ladderPosition = ladder.position
+
+        -- check ladder bounds or something
+        if position.y + size.height > ladderPosition.y or
+           position.y < ladderPosition.y then
+            -- are we moving on it
+            if controller:moving("up") or controller:moving("down") then
+                velocity:setGravity(0)
+                if not state:is("climb") then
+                    state:unlock()
+                end
+                state:set("climb", true)
+                controller:setLadder(ladder)
+                ladder:give("passive")
+            end
         end
     end
 end
@@ -34,7 +71,7 @@ function PlayerControllerSystem:update(dt)
         __PUNCH_TIMER__:update(dt)
     end
 
-    if velocity:getY() > 0 then
+    if velocity:getY() > 0 and not state:is("climb") then
         if not state:is("jump") then
             state:unlock()
         end
@@ -42,15 +79,15 @@ function PlayerControllerSystem:update(dt)
     end
 
     -- horizontal movements
-    local speed = 0
+    local xspeed = 0
     if controller:moving("right") then
-        speed = __PLAYER_SPEED__
+        xspeed = __PLAYER_SPEED__
         state:setDirection(1)
     elseif controller:moving("left") then
-        speed = -__PLAYER_SPEED__
+        xspeed = -__PLAYER_SPEED__
         state:setDirection(-1)
     end
-    velocity:setX(speed)
+    velocity:setX(xspeed)
 
     if velocity:getY() == 0 then
         if velocity:getX() ~= 0 and not state:isAnyOf("jump", "punch") then
@@ -61,10 +98,43 @@ function PlayerControllerSystem:update(dt)
             end
         end
     end
+
+    -- ladder movements
+    local result = tiled.checkRectangle(__PLAYER__.screen.name, position.x, position.y, size.width, size.height, {{"exclude", __PLAYER__}, "tile"})
+
+    if #result == 0 then
+        self:dropLadder()
+    else
+        if result[1]:has("climbable") then
+            self:checkLadder(result[1])
+        end
+    end
+
+    local yspeed = 0
+    if state:is("climb") then
+        local ladder = controller:getLadder()
+        if not ladder then
+            self:dropLadder()
+            state:unlock()
+            return
+        end
+        position.x = ladder.position:getX() + (ladder.size:getWidth() - size:getWidth()) * 0.5
+
+        if controller:moving("up") then
+            yspeed = -__PLAYER_SPEED__
+        elseif controller:moving("down") then
+            yspeed = __PLAYER_SPEED__
+        end
+        velocity:setY(yspeed)
+    end
 end
 
 function PlayerControllerSystem:gamepadaxis(axis, value)
     if axis == "leftx" then
+        if state:is("climb") then
+            return
+        end
+
         if value > 0.5 then
             controller:move("left",  false)
             controller:move("right", true)
@@ -82,6 +152,9 @@ function PlayerControllerSystem:gamepadaxis(axis, value)
         elseif value > 0.5 then
             controller:move("up",   false)
             controller:move("down", true)
+        else
+            controller:move("up",   false)
+            controller:move("down", false)
         end
     end
 end
