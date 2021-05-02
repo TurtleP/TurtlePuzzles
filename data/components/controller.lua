@@ -3,12 +3,27 @@ local core    = require("data.core")
 
 local sound = core.sounds
 
-local Controller = concord.component("controller")
+local PlayerController = concord.component("controller", function(component)
+    local move = {"left", "right", "up", "down"}
+    for _, value in ipairs(move) do
+        component[value] = false
+    end
 
-local __PLAYER_SPEED__ = 75
+    component.onLadder = false
+    component.current  = nil
+end)
 
-local __PUNCH_TIMER__  = nil
-local __LADDER_TIMER__ = nil
+-- Set @direction (string) to @move (bool)
+function PlayerController:move(direction, move)
+    assert:type(direction, "string")
+    assert:type(move, "boolean")
+
+    self[direction] = move
+end
+
+
+--[[
+    OLD CODE BELOW --
 
 local function resetClimbingStuff(entity)
     entity.state:unlock()
@@ -113,5 +128,5 @@ function Controller:gamepadpressed(entity, button)
         end
     end
 end
-
-return Controller
+]]
+return PlayerController

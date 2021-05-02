@@ -1,5 +1,9 @@
 local concord = require("libraries.concord")
 
-concord.component("name", function(component, name)
+local Name = concord.component("name", function(component, name)
     component.value = name
 end)
+
+function Name:is(compare)
+    return self.value == compare
+end

@@ -49,11 +49,11 @@ function State:isLocked()
     return self.locked
 end
 
-function State:was(name)
+function State:is(name)
     return self.current == name
 end
 
-function State:wasAnyOf(...)
+function State:issAnyOf(...)
     local arg = {...}
     for index = 1, #arg do
         if self.current == arg[index] then

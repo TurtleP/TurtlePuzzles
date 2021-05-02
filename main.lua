@@ -17,7 +17,7 @@ function love.load()
     love.math.setRandomSeed(os.time())
     love.math.random(); love.math.random()
 
-    state.switch("intro")
+    state.switch("game", "test")
     save.initFile(1, {name = "test"})
 end
 
@@ -26,9 +26,7 @@ function love.update(dt)
 end
 
 function love.gamepadpressed(joystick, button)
-
-end
-
-function love.gamepadaxis(joystick, axis, value)
-
+    if button == "start" then
+        love.event.quit()
+    end
 end

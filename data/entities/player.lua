@@ -1,7 +1,7 @@
 local collisions = {}
 
 collisions.floor = function(this, other)
-    if this.state:was("jump") then
+    if this.state:is("jump") then
         this.state:unlock()
     end
     return false
@@ -71,7 +71,7 @@ local function Player(entity, screen, x, y)
     :give("velocity")
     :give("mask", function(this, other)
         if other.name.value == "tile" then
-            if not this.state:was("climb") then
+            if not this.state:is("climb") then
                 return "slide"
             end
             return false

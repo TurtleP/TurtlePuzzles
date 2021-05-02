@@ -55,6 +55,11 @@ function tiled.getMap(screen)
     end
 end
 
+function tiled.getEntities(screen)
+    local map = tiled.getMap(screen)
+    return map:getEntities()
+end
+
 function tiled.update(dt)
     if tiled.currentMap then
         for _, value in pairs(tiled.currentMap) do
