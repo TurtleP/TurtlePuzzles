@@ -66,7 +66,7 @@ function State:set(to, shouldLock)
 
     if self.current ~= to and not self:isLocked() then
         self.current = to
-        self:lock(before, shouldLock)
+        self:lock(to, shouldLock)
     end
     return self
 end

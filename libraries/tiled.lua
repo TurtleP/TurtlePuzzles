@@ -95,7 +95,7 @@ function tiled.checkRectangle(screen, x, y, width, height, list)
 
                 if not skip then
                     if aabb(x, y, width, height, other.position.x, other.position.y, other.size.width, other.size.height) then
-                        table.insert(result, other)
+                        table.add_value(result, other)
                     end
                 end
             end

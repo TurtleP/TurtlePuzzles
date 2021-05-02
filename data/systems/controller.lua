@@ -71,26 +71,25 @@ function PlayerControllerSystem:update(dt)
         __PUNCH_TIMER__:update(dt)
     end
 
-    if velocity:getY() > 0 and not state:is("climb") then
-        if not state:is("jump") then
-            state:unlock()
+    -- horizontal movements
+    if not state:is("punch") then
+        local xspeed = 0
+        if controller:moving("right") then
+            xspeed = __PLAYER_SPEED__
+            state:setDirection(1)
+        elseif controller:moving("left") then
+            xspeed = -__PLAYER_SPEED__
+            state:setDirection(-1)
         end
-        state:set("jump", true)
+        velocity:setX(xspeed)
     end
 
-    -- horizontal movements
-    local xspeed = 0
-    if controller:moving("right") then
-        xspeed = __PLAYER_SPEED__
-        state:setDirection(1)
-    elseif controller:moving("left") then
-        xspeed = -__PLAYER_SPEED__
-        state:setDirection(-1)
+    if velocity:stopped() then
+        state:set("idle")
     end
-    velocity:setX(xspeed)
 
     if velocity:getY() == 0 then
-        if velocity:getX() ~= 0 and not state:isAnyOf("jump", "punch") then
+        if velocity:getX() ~= 0 then
             state:set("walk", true)
         else
             if state:is("walk") then
@@ -127,10 +126,23 @@ function PlayerControllerSystem:update(dt)
         end
         velocity:setY(yspeed)
     end
+
+    if velocity:getY() > 0 and not state:is("climb") then
+        if not state:is("jump") then
+            state:unlock()
+        end
+        state:set("jump", true)
+    end
 end
 
 function PlayerControllerSystem:gamepadaxis(axis, value)
     if axis == "leftx" then
+
+        if value > -0.5 and value < 0.5 then
+            controller:move("right", false)
+            controller:move("left",  false)
+        end
+
         if state:is("climb") then
             return
         end
@@ -141,9 +153,6 @@ function PlayerControllerSystem:gamepadaxis(axis, value)
         elseif value < -0.5 then
             controller:move("right", false)
             controller:move("left",  true)
-        else
-            controller:move("right", false)
-            controller:move("left",  false)
         end
     elseif axis == "lefty" then
         if value < -0.5 then
@@ -182,6 +191,9 @@ function PlayerControllerSystem:gamepadpressed(button)
         end
         state:set("punch", true)
         sound.play("charge")
+
+        velocity:setX(100 * state.direction)
+
         __PUNCH_TIMER__ = timer:new(1, nil, function()
             state:unlock()
         end)

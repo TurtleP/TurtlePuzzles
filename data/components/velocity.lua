@@ -31,6 +31,10 @@ function Velocity:set(x, y)
     self.y = assert:type(y, "number")
 end
 
+function Velocity:stopped()
+    return self.x == 0 and self.y == 0
+end
+
 function Velocity:get()
     return self.x, self.y
 end
@@ -50,5 +54,11 @@ end
 function Velocity:setY(y)
     self.y = y
 end
+
+function Velocity:__tostring()
+    return string.format("%d, %d", self.x, self.y)
+end
+
+Velocity.__mt["__tostring"] = Velocity.__tostring
 
 return Velocity
