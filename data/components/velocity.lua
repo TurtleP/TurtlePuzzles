@@ -35,6 +35,14 @@ function Velocity:get()
     return self.x, self.y
 end
 
+function Velocity:getX()
+    return self.x
+end
+
+function Velocity:getY()
+    return self.y
+end
+
 function Velocity:setX(x)
     self.x = x
 end

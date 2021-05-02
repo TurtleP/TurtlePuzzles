@@ -14,6 +14,7 @@ local __PLAYER_JUMP_SPEED__ = -160
 local controller = nil
 local state      = nil
 local velocity   = nil
+local animation  = nil
 
 function PlayerControllerSystem:init(world)
     self.pool.onEntityAdded = function(_, entity)
@@ -23,6 +24,7 @@ function PlayerControllerSystem:init(world)
             controller = __PLAYER__.controller
             state      = __PLAYER__.state
             velocity   = __PLAYER__.velocity
+            animation  = __PLAYER__.animation
         end
     end
 end
@@ -30,6 +32,34 @@ end
 function PlayerControllerSystem:update(dt)
     if __PUNCH_TIMER__ then
         __PUNCH_TIMER__:update(dt)
+    end
+
+    if velocity:getY() > 0 then
+        if not state:is("jump") then
+            state:unlock()
+        end
+        state:set("jump", true)
+    end
+
+    -- horizontal movements
+    local speed = 0
+    if controller:moving("right") then
+        speed = __PLAYER_SPEED__
+        state:setDirection(1)
+    elseif controller:moving("left") then
+        speed = -__PLAYER_SPEED__
+        state:setDirection(-1)
+    end
+    velocity:setX(speed)
+
+    if velocity:getY() == 0 then
+        if velocity:getX() ~= 0 and not state:isAnyOf("jump", "punch") then
+            state:set("walk", true)
+        else
+            if state:is("walk") then
+                state:unlock()
+            end
+        end
     end
 end
 
@@ -64,11 +94,19 @@ function PlayerControllerSystem:gamepadpressed(button)
 
     if button == "a" then
         if velocity.y == 0 then
+            -- override walking on jump
+            if state:is("walk") then
+                state:unlock()
+            end
             state:set("jump", true)
             sound.play("jump")
             velocity:setY(__PLAYER_JUMP_SPEED__)
         end
     elseif button == "y" then
+        -- override walking on punch
+        if state:is("walk") then
+            state:unlock()
+        end
         state:set("punch", true)
         sound.play("charge")
         __PUNCH_TIMER__ = timer:new(1, nil, function()

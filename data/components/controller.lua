@@ -21,6 +21,13 @@ function PlayerController:move(direction, move)
     self[direction] = move
 end
 
+function PlayerController:moving(direction)
+    assert:type(direction, "string")
+    assert:type(self[direction], "boolean")
+
+    return self[direction]
+end
+
 
 --[[
     OLD CODE BELOW --

@@ -53,7 +53,7 @@ function State:is(name)
     return self.current == name
 end
 
-function State:issAnyOf(...)
+function State:isAnyOf(...)
     local arg = {...}
     for index = 1, #arg do
         if self.current == arg[index] then
