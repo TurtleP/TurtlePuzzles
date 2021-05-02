@@ -7,6 +7,23 @@ collisions.floor = function(this, other)
     return false
 end
 
+collisions.passive = function(this, other)
+    if other:has("climbable") then
+        if this:has("climbing") then
+            this.climbing:set(other)
+            if this.state:was("climb") then
+                this.velocity:setGravity(0)
+            end
+        else
+            this:give("canclimb")
+        end
+    end
+end
+
+local function onUpdate(state, this, dt)
+
+end
+
 local playerTexure = love.graphics.newImage("assets/graphics/game/player.png")
 local playerQuads = {}
 
@@ -39,6 +56,12 @@ for i = 1, 4 do
     playerQuads.punch[i] = love.graphics.newQuad((i - 1) * 12, 140, 12, 20, playerTexure)
 end
 
+-- CLIMB --
+playerQuads.climb = {}
+for i = 1, 6 do
+    playerQuads.climb[i] = love.graphics.newQuad((i - 1) * 12, 160, 12, 20, playerTexure)
+end
+
 local function Player(entity, screen, x, y)
     entity
     :give("screen", screen)
@@ -48,11 +71,16 @@ local function Player(entity, screen, x, y)
     :give("velocity")
     :give("mask", function(this, other)
         if other.name.value == "tile" then
-            return "slide"
+            if not this.state:was("climb") then
+                return "slide"
+            end
+            return false
+        elseif other.name.value == "ladder" then
+            return "cross"
         end
     end)
     :give("controller")
-    :give("state", "idle")
+    :give("state", "idle", onUpdate)
     :give("collision", collisions)
     :give("animation", playerTexure, playerQuads)
 end

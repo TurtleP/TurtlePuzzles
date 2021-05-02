@@ -25,6 +25,7 @@ function game:enter(_, map)
 
     self.world:addSystem(systems.controller)
     self.world:addSystem(systems.animation)
+    self.world:addSystem(systems.state)
 end
 
 function game:update(dt)

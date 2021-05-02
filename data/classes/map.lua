@@ -63,6 +63,8 @@ function Map:loadEntities(layerData)
         elseif name == "spawn" then
             entity:assemble(entities.player, self.screen, entityData.x, entityData.y)
             self:setCameraTarget(entity)
+        elseif name == "ladder" then
+            entity:assemble(entities.ladder, self.screen, entityData.x, entityData.y, entityData.width, entityData.height)
         end
 
         table.insert(self.entities, entity)
@@ -83,6 +85,7 @@ end
 local target = {}
 function Map:updateCamera()
     if not self.target then
+        self.camera:lookAt((self.width - self.camera.x) / 2, (self.height - self.camera.y) / 2)
         return
     end
 

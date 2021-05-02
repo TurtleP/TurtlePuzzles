@@ -30,27 +30,32 @@ function Physics:update(dt)
             return
         end
 
-        if entity:has("state") then
-            entity.state:update(dt)
+        -- update velocity
+        if entity:has("velocity") and entity.velocity.gravity ~= 0 then
+            entity.velocity.y = math.min(entity.velocity.y + entity.velocity.gravity * dt, entity.velocity.gravity)
         end
 
-        -- update velocity
-        if entity:has("velocity") then
-            entity.velocity.y = math.min(entity.velocity.y + entity.velocity.gravity * dt, entity.velocity.gravity)
-
+        if entity:has("collision") then
             if entity:has("mask") then
                otherFilter = entity.mask.func
             end
 
-            local ax, ay, collisions, len = self.world:move(entity, entity.position.x + entity.velocity.x * dt, entity.position.y + entity.velocity.y * dt, screenFilter)
+            local ax, ay, collisions, len
+            if entity:has("velocity") then
+                ax, ay, collisions, len = self.world:move(entity, entity.position.x + entity.velocity.x * dt, entity.position.y + entity.velocity.y * dt, screenFilter)
+            end
 
             -- hit something, resolve
-            if entity:has("collision") and #collisions > 0 then
+            if len and len > 0 then
                 for index = 1, #collisions do
-                    if collisions[index].normal.y ~= 0 then
-                        self:resolveVertical(entity, collisions[index])
-                    elseif collisions[index].normal.x ~= 0 then
-                        self:resolveHorizontal(entity, collisions[index])
+                    if not collisions[index].other:has("passive") then
+                        if collisions[index].normal.y ~= 0 then
+                            self:resolveVertical(entity, collisions[index])
+                        elseif collisions[index].normal.x ~= 0 then
+                            self:resolveHorizontal(entity, collisions[index])
+                        end
+                    else
+                        entity.collision.passive(entity, collisions[index].other)
                     end
                 end
             end

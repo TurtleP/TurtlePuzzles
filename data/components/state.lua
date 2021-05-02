@@ -11,8 +11,8 @@ local State = concord.component("state", function(component, default, onUpdate)
     component.storedData = nil
 end)
 
-function State:update(dt)
-    self.run(self, dt)
+function State:update(entity, dt)
+    self.run(self, entity, dt)
 end
 
 function State:store(entity)
