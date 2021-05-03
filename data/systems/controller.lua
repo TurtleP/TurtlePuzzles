@@ -37,11 +37,14 @@ end
 
 function PlayerControllerSystem:dropLadder()
     if controller:isOnLadder() then
-        velocity:resetGravity()
         velocity:setY(0)
 
         controller:getLadder():remove("passive")
         controller:setLadder(nil)
+    end
+
+    if velocity.gravity == 0 then
+        velocity:resetGravity()
     end
 end
 
@@ -98,8 +101,11 @@ function PlayerControllerSystem:update(dt)
         end
     end
 
-    -- ladder movements
+    -- ladder movements -- check bottom first
     local result = tiled.checkRectangle(__PLAYER__.screen.name, position.x, position.y, size.width, size.height, {{"exclude", __PLAYER__}, "tile"})
+    if #result == 0 then
+        result = tiled.checkRectangle(__PLAYER__.screen.name, position.x, position.y + 1, size.width, size.height, {{"exclude", __PLAYER__}, "tile"})
+    end
 
     if #result == 0 then
         self:dropLadder()

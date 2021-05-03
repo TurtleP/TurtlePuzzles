@@ -1,6 +1,10 @@
 local collisions = {}
 
 collisions.floor = function(this, other)
+    if this.state:isAnyOf("jump") then
+        this.state:unlock()
+    end
+
     if other:has("climbable") then
         if this.position:getY() < other.position.y then
             if this.controller:moving("down") or this.controller:isOnLadder() then
@@ -12,9 +16,6 @@ collisions.floor = function(this, other)
             end
         end
     else
-        if this.state:isAnyOf("jump") then
-            this.state:unlock()
-        end
         this.controller:setLadder(nil)
     end
 
