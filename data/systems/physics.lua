@@ -9,17 +9,27 @@ function Physics:init()
     self.world = bump.newWorld(16)
 
     self.pool.onEntityAdded = function(_, entity)
-        self.world:add(entity, entity.position.x, entity.position.y, entity.size.width, entity.size.height)
+        self.world:add(entity, entity.position:x(), entity.position:y(), entity.size:width(), entity.size:height())
     end
 
     self.pool.onEntityRemoved = function(_, entity)
         self.world:remove(entity)
     end
+
+    self.speedFactor = 1
 end
 
 -- other filter instructions
 local otherFilter = function(_, _)
     return "slide"
+end
+
+function Physics:gamepadpressed(button)
+    if button == "leftshoulder" then
+        self.speedFactor = math.max(self.speedFactor - 0.2, 1)
+    elseif button == "rightshoulder" then
+        self.speedFactor = math.min(self.speedFactor + 0.2, 4)
+    end
 end
 
 local function screenFilter(this, other)
@@ -36,6 +46,7 @@ end
     otherwise it .. won't do anything
 --]]
 function Physics:update(dt)
+    dt = dt / self.speedFactor
     for _, entity in ipairs(self.pool) do
         -- check the entity exists or something
         if not self.world:hasItem(entity) then
@@ -54,7 +65,9 @@ function Physics:update(dt)
 
             local ax, ay, collisions, len
             if entity:has("velocity") then
-                ax, ay, collisions, len = self.world:move(entity, entity.position.x + entity.velocity.x * dt, entity.position.y + entity.velocity.y * dt, screenFilter)
+                if not self:resolveScreenChange(entity, dt) then
+                    ax, ay, collisions, len = self.world:move(entity, entity.position:x() + entity.velocity.x * dt, entity.position:y() + entity.velocity.y * dt, screenFilter)
+                end
             end
 
             -- hit something, resolve
@@ -86,23 +99,41 @@ function Physics:resolveScreenChange(entity, dt)
     end
 
     local position = entity.position
-    local velocity = entity.velocity
     local screen   = entity.screen
+    local size     = entity.size
 
     -- check if off top screen
-    if screen:is("top") then
-        if position:getY() + velocity:getY() * dt > tiled.getSize(screen.name).height then
-            position:set(position:getX() - 40, 0)
+    local pass = false
+    local offset = 40
+    if position:x() < 160 then
+        offset = 0
+    end
 
+    if position:y() > tiled.getSize(screen.name).height then
+        if screen:is("top") then
             if entity.name:is("player") then
                 tiled.getMap("bottom"):setCameraTarget(entity)
             end
-
-            velocity:set(0, 0)
-            screen:set("bottom")
-            return true
+            screen:set("bottom", function()
+                self.world:update(entity, entity.position:x() - offset, 0)
+                position:set(position:x() - offset, 0)
+                pass = true
+            end)
+        end
+    elseif position:y() + size:height() < 0 then
+        if screen:is("bottom") then
+            if entity.name:is("player") then
+                tiled.getMap("top"):setCameraTarget(entity)
+            end
+            screen:set("top", function()
+                self.world:update(entity, entity.position:x() + offset, 240 - size:height())
+                position:set(position:x() + offset, 240 - size:height())
+                pass = true
+            end)
         end
     end
+
+    return pass
 end
 
 function Physics:resolveVertical(entity, against)

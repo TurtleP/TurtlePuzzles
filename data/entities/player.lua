@@ -6,7 +6,7 @@ collisions.floor = function(this, other)
     end
 
     if other:has("climbable") then
-        if this.position:getY() < other.position.y then
+        if this.position:y() < other.position:y() then
             if this.controller:moving("down") or this.controller:isOnLadder() then
                 return true
             end
@@ -53,12 +53,13 @@ ladders should be passive if colliding, and:
 - we are below the ladder
 --]]
 local function mask(this, other)
+    -- print(this.position, this.screen)
     if other.name.value == "tile" then
         if not other:has("climbable") then
             return "slide"
         else
             local position = this.position
-            if this.controller:isOnLadder() or position:getY() > other.position:getY() then
+            if this.controller:isOnLadder() or position:y() > other.position:y() then
                 return "cross"
             end
             return "slide"

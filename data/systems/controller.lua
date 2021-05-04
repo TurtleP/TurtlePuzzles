@@ -55,8 +55,8 @@ function PlayerControllerSystem:checkLadder(ladder)
         local ladderPosition = ladder.position
 
         -- check ladder bounds or something
-        if position.y + size.height > ladderPosition.y or
-           position.y < ladderPosition.y then
+        if position:y() + size:height() > ladder.position:y() or
+           position:y() < ladder.position:y() then
             -- are we moving on it
             if controller:moving("up") or controller:moving("down") then
                 velocity:setGravity(0)
@@ -104,9 +104,9 @@ function PlayerControllerSystem:update(dt)
     end
 
     -- ladder movements -- check bottom first
-    local result = tiled.checkRectangle(__PLAYER__.screen.name, position.x, position.y, size.width, size.height, {{"exclude", __PLAYER__}, "tile"})
+    local result = tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y(),     size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
     if #result == 0 then
-        result = tiled.checkRectangle(__PLAYER__.screen.name, position.x, position.y + 1, size.width, size.height, {{"exclude", __PLAYER__}, "tile"})
+        result =   tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y() + 1, size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
     end
 
     if #result == 0 then
@@ -125,7 +125,7 @@ function PlayerControllerSystem:update(dt)
             state:unlock()
             return
         end
-        position.x = ladder.position:getX() + (ladder.size:getWidth() - size:getWidth()) * 0.5
+        position:set(ladder.position:x() + (ladder.size:width() - size:width()) * 0.5)
 
         if controller:moving("up") then
             yspeed = -__PLAYER_SPEED__

@@ -26,7 +26,7 @@ function love.update(dt)
 end
 
 function love.gamepadpressed(joystick, button)
-    if button == "start" then
+    if button == "select" then
         love.event.quit()
     end
 end

@@ -26,10 +26,32 @@ function UISystem:init()
     self.livesPositionMax = 8
 
     self.livesTween = tween.new(1, self, {livesPosition = 8}, "inOutBack")
+    self.resetTween = false
+
+    self.livesTimer = timer:new(3, nil, function()
+        self.resetTween = true
+    end)
+
+    self.paused = false
+end
+
+function UISystem:gamepadpressed(button)
+    if button == "start" then
+        self:pause()
+    end
+end
+
+function UISystem:pause()
+    self.paused = not self.pausedd
 end
 
 function UISystem:update(dt)
+    if self.resetTween then
+        dt = -dt
+    end
+
     self.livesTween:update(dt)
+    self.livesTimer:update(dt)
 end
 
 function UISystem:draw(screen, depth)
@@ -52,8 +74,23 @@ function UISystem:draw(screen, depth)
 
         love.graphics.draw(textures.game.key, 8, 8, math.pi / 4, 1, 1, -4, 4)
         love.graphics.print(inventory:getKeys(), fonts.ui, 8 + textures.game.key:getWidth() + 4, (12 + textures.game.key:getHeight() / 2) - fonts.ui:getHeight() / 2)
-    end
 
+        -- render the pause menu
+        if self.paused then
+            love.graphics.push("all")
+            love.graphics.setColor(0, 0, 0, 0.75)
+            -- love.graphics.rectangle("fill", )
+
+            love.graphics.pop()
+        end
+    end
+    love.graphics.pop()
+
+    love.graphics.push("all")
+    if self.paused then
+        love.graphics.setColor(0, 0, 0, 0.45)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+    end
     love.graphics.pop()
 end
 

@@ -1,7 +1,5 @@
 local Object = require("libraries.classic")
-
 local Map = Object:extend()
-Map.Player = nil
 
 local camera = require("libraries.camera")
 
@@ -20,8 +18,6 @@ concord.utils.loadNamespace("data/components")
 
 local entities = {}
 concord.utils.loadNamespace("data/entities", entities)
-
-local DEBUG_DRAW = false
 
 function Map:new(name, size, layers, properties)
     self.size = size
@@ -83,10 +79,6 @@ function Map:getSize()
     return self.size
 end
 
-function Map:getPlayer()
-    return Map.Player
-end
-
 function Map:updateCamera()
     if not self.target then
         self.camera:lookAt((self.size.width - self.camera.x) / 2, (self.size.height - self.camera.y) / 2)
@@ -98,7 +90,7 @@ function Map:updateCamera()
     end
 
     local wvw, wvh = self.windowSize.width / (2 * self.camera.scale), self.windowSize.height / (2 * self.camera.scale)
-    local dx, dy = self.target.position.x - self.camera.x, self.target.position.y - self.camera.y
+    local dx, dy = self.target.position:x() - self.camera.x, self.target.position:y() - self.camera.y
 
     self.camera.x = math.clamp(self.camera.x + dx / 2, 0 + wvw, self.size.width  - wvw)
     self.camera.y = math.clamp(self.camera.y + dy / 2, 0 + wvh, self.size.height - wvh)
@@ -108,24 +100,14 @@ function Map:update(dt)
     self:updateCamera()
 end
 
-function Map:debugDraw()
-    for _, entity in ipairs(self.entities) do
-        love.graphics.rectangle("line", entity.position.x, entity.position.y, entity.size.width, entity.size.height)
-    end
-end
-
 function Map:draw(wrapper)
     self.camera:attach()
 
     love.graphics.draw(self.background)
     love.graphics.draw(self.tiles, self.offset)
 
-    if DEBUG_DRAW then
-        self:debugDraw()
-    end
-
     if wrapper then
-        wrapper()
+        wrapper(self.screen)
     end
 
     self.camera:detach()

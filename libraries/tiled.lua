@@ -96,6 +96,7 @@ local function aabb(x, y, width, height, otherX, otherY, otherWidth, otherHeight
            y < otherY + otherHeight
 end
 
+-- TODO: somehow use physics world
 function tiled.checkRectangle(screen, x, y, width, height, list)
     local entities          =  tiled.getEntities(screen)
     local result, exclude   = {}, nil
@@ -123,7 +124,7 @@ function tiled.checkRectangle(screen, x, y, width, height, list)
                 end
 
                 if not skip then
-                    if aabb(x, y, width, height, other.position.x, other.position.y, other.size.width, other.size.height) then
+                    if aabb(x, y, width, height, other.position:x(), other.position:y(), other.size:width(), other.size:height()) then
                         table.add_value(result, other)
                     end
                 end

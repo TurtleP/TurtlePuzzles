@@ -28,7 +28,7 @@ function game:enter(_, map)
         end
     end
 
-    local systems = {systems.controller, systems.animation, systems.state, systems.interface}
+    local systems = {systems.debug, systems.controller, systems.animation, systems.state, systems.interface}
     self.world:addSystems(unpack(systems))
 end
 

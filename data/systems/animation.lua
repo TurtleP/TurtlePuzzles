@@ -21,7 +21,7 @@ end
 
 local function getRenderOffset(entity, scale)
     if scale < 0 then
-        return math.abs(entity.size.width * scale)
+        return math.abs(entity.size:width() * scale)
     end
     return 0
 end
@@ -32,9 +32,9 @@ function Animation:draw(screen)
             local direction = entity.state.direction or 1
             if #entity.animation.quads[entity.state.current] > 0 then -- draw quads
                 local quad = entity.animation.quads[entity.state.current][entity.animation.quadi]
-                love.graphics.draw(entity.animation.texture, quad, entity.position.x, entity.position.y, 0, direction, 1, getRenderOffset(entity, direction))
+                love.graphics.draw(entity.animation.texture, quad, entity.position:x(), entity.position:y(), 0, direction, 1, getRenderOffset(entity, direction))
             else
-                love.graphics.draw(entity.animation.texture, entity.position.x, entity.position.y, direction, 1, getRenderOffset(entity, direction))
+                love.graphics.draw(entity.animation.texture, entity.position:x(), entity.position:y(), direction, 1, getRenderOffset(entity, direction))
             end
         end
     end

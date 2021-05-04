@@ -1,37 +1,33 @@
 local concord = require("libraries.concord")
 
 local Position = concord.component("position", function(component, x, y)
-    component.x = x
-    component.y = y
+    component._x = x
+    component._y = y
 end)
 
+function Position:get()
+    return self._x, self._y
+end
+
 function Position:set(x, y)
-    self.x = x
-    self.y = y
+    self._x = x or self:x()
+    self._y = y or self:y()
 end
 
-function Position:getX()
-    return self.x
+function Position:x()
+    return self._x
 end
 
-function Position:getY()
-    return self.y
-end
-
-function Position:setX(x)
-    self.x = x
-end
-
-function Position:setY(y)
-    self.y = y
+function Position:y()
+    return self._y
 end
 
 function Position:__eq(other)
-    return self.x == other.x and self.y == other.y
+    return self._x == other._x and self._y == other._y
 end
 
 function Position:__tostring()
-    return string.format("%d, %d", self.x, self.y)
+    return string.format("%d, %d", self:get())
 end
 
 Position.__mt.__tostring = Position.__tostring
