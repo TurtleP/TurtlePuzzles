@@ -12,3 +12,9 @@ end
 function Size:getHeight()
     return self.height
 end
+
+function Size:__tostring()
+    return string.format("%d, %d", self.width, self.height)
+end
+
+Size.__mt.__tostring = Size.__tostring

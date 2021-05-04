@@ -60,6 +60,35 @@ function tiled.getEntities(screen)
     return map:getEntities()
 end
 
+function tiled.getPlayer()
+    return Map.Player
+end
+
+function tiled.getSize(screen)
+    local map = tiled.getMap(screen)
+    return map:getSize()
+end
+
+function tiled.update(dt)
+    if tiled.currentMap then
+        for _, value in pairs(tiled.currentMap) do
+            value:update(dt)
+        end
+    end
+end
+
+function tiled.drawTop(wrapper)
+    if tiled.currentMap then
+        tiled.currentMap.top:draw(wrapper)
+    end
+end
+
+function tiled.drawBottom(wrapper)
+    if tiled.currentMap and tiled.currentMap.bottom then
+        tiled.currentMap.bottom:draw(wrapper)
+    end
+end
+
 local function aabb(x, y, width, height, otherX, otherY, otherWidth, otherHeight)
 	return x + width > otherX      and
            x < otherX + otherWidth and
@@ -103,26 +132,6 @@ function tiled.checkRectangle(screen, x, y, width, height, list)
     end
 
     return result
-end
-
-function tiled.update(dt)
-    if tiled.currentMap then
-        for _, value in pairs(tiled.currentMap) do
-            value:update(dt)
-        end
-    end
-end
-
-function tiled.drawTop(wrapper)
-    if tiled.currentMap then
-        tiled.currentMap.top:draw(wrapper)
-    end
-end
-
-function tiled.drawBottom(wrapper)
-    if tiled.currentMap and tiled.currentMap.bottom then
-        tiled.currentMap.bottom:draw(wrapper)
-    end
 end
 
 return tiled

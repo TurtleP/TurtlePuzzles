@@ -1,6 +1,8 @@
 local concord = require("libraries.concord")
 local bump    = require("libraries.bump")
 
+local tiled   = require("libraries.tiled")
+
 local Physics = concord.system({pool = {"position", "size"}})
 
 function Physics:init()
@@ -8,6 +10,10 @@ function Physics:init()
 
     self.pool.onEntityAdded = function(_, entity)
         self.world:add(entity, entity.position.x, entity.position.y, entity.size.width, entity.size.height)
+    end
+
+    self.pool.onEntityRemoved = function(_, entity)
+        self.world:remove(entity)
     end
 end
 
@@ -17,12 +23,18 @@ local otherFilter = function(_, _)
 end
 
 local function screenFilter(this, other)
-    if this.screen.name ~= other.screen.name then
+    if this.screen ~= other.screen then
         return false
     end
     return otherFilter(this, other)
 end
 
+--[[
+    for physics collisions to work, entities require position, velocity, and collision
+
+    if an entity is passive, make sure that it's in the entity mask and returns "cross"
+    otherwise it .. won't do anything
+--]]
 function Physics:update(dt)
     for _, entity in ipairs(self.pool) do
         -- check the entity exists or something
@@ -60,7 +72,35 @@ function Physics:update(dt)
                 end
             end
 
-            entity.position:set(ax, ay)
+            -- set new position
+            if ax and ay then
+                entity.position:set(ax, ay)
+            end
+        end
+    end
+end
+
+function Physics:resolveScreenChange(entity, dt)
+    if not entity:has("velocity") then
+        return
+    end
+
+    local position = entity.position
+    local velocity = entity.velocity
+    local screen   = entity.screen
+
+    -- check if off top screen
+    if screen:is("top") then
+        if position:getY() + velocity:getY() * dt > tiled.getSize(screen.name).height then
+            position:set(position:getX() - 40, 0)
+
+            if entity.name:is("player") then
+                tiled.getMap("bottom"):setCameraTarget(entity)
+            end
+
+            velocity:set(0, 0)
+            screen:set("bottom")
+            return true
         end
     end
 end

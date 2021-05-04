@@ -10,6 +10,7 @@ function fonts.init()
     end
 
     fonts.fileSelect    = love.graphics.newFont(assetPath, 14)
+    fonts.ui            = love.graphics.newFont(assetPath, 14)
     fonts.fileSelectBig = love.graphics.newFont(assetPath, 28)
 
     return fonts

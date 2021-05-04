@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="12">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="19">
  <editorsettings>
   <export target="../test_bottom.lua" format="lua"/>
  </editorsettings>
@@ -8,7 +8,7 @@
  </tileset>
  <layer id="1" name="tiles" width="20" height="15">
   <data encoding="csv">
-201,203,202,203,202,203,202,203,202,203,202,203,202,203,202,203,202,203,202,203,
+201,203,202,203,202,203,202,203,202,203,0,203,202,203,202,203,202,203,202,203,
 223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
 223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
 223,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,226,
@@ -25,8 +25,27 @@
 309,309,309,309,309,309,309,309,309,309,309,309,309,309,309,309,309,309,309,309
 </data>
  </layer>
- <objectgroup id="2" name="entities" visible="0">
-  <object id="2" name="tile" x="0" y="0" width="320" height="16"/>
+ <layer id="3" name="foreground" width="20" height="15">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="entities">
+  <object id="2" name="tile" x="0" y="0" width="160" height="16"/>
   <object id="3" name="tile" x="0" y="16" width="16" height="224"/>
   <object id="4" name="tile" x="304" y="16" width="16" height="224"/>
   <object id="5" name="tile" x="16" y="192" width="288" height="48"/>
@@ -35,5 +54,6 @@
   <object id="9" name="tile" x="32" y="176" width="16" height="16"/>
   <object id="10" name="tile" x="256" y="160" width="16" height="32"/>
   <object id="11" name="tile" x="272" y="176" width="16" height="16"/>
+  <object id="17" name="tile" x="176" y="0" width="144" height="16"/>
  </objectgroup>
 </map>

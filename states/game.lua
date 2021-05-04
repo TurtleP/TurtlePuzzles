@@ -4,8 +4,13 @@ local tiled = require("libraries.tiled").init()
 
 local concord = require("libraries.concord")
 
+local core = require("data.core")
+local textures = core.textures
+
 local systems = {}
 concord.utils.loadNamespace("data/systems", systems)
+
+local player = nil
 
 function game:enter(_, map)
     tiled.loadMap(map)
@@ -23,9 +28,8 @@ function game:enter(_, map)
         end
     end
 
-    self.world:addSystem(systems.controller)
-    self.world:addSystem(systems.animation)
-    self.world:addSystem(systems.state)
+    local systems = {systems.controller, systems.animation, systems.state, systems.interface}
+    self.world:addSystems(unpack(systems))
 end
 
 function game:update(dt)
@@ -35,7 +39,7 @@ end
 
 function game:drawTop(depth)
     tiled.drawTop(function()
-        self.world:emit("draw", "top")
+        self.world:emit("draw", "top", depth)
     end)
 end
 

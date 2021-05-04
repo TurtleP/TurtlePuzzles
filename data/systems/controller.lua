@@ -19,6 +19,7 @@ local velocity   = nil
 local animation  = nil
 local size       = nil
 local position   = nil
+local screen     = nil
 
 function PlayerControllerSystem:init(world)
     self.pool.onEntityAdded = function(_, entity)
@@ -31,6 +32,7 @@ function PlayerControllerSystem:init(world)
             animation  = __PLAYER__.animation
             size       = __PLAYER__.size
             position   = __PLAYER__.position
+            screen     = __PLAYER__.screen
         end
     end
 end
@@ -203,6 +205,10 @@ function PlayerControllerSystem:gamepadpressed(button)
         __PUNCH_TIMER__ = timer:new(1, nil, function()
             state:unlock()
         end)
+    elseif button == "x" then
+        position:set(position:getX() - 40, -200)
+        tiled.getMap("bottom"):setCameraTarget(__PLAYER__)
+        screen:set("bottom")
     end
 end
 

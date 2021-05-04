@@ -102,9 +102,11 @@ local function handleDraw(screen)
         end
 
         GS["drawTop"](-depth)
-        return save.draw(-depth)
+        save.draw(-depth)
+    else
+        GS["drawBottom"]()
     end
-    return GS["drawBottom"]()
+    GS["draw"](screen)
 end
 
 function GS.registerEvents(callbacks)
@@ -116,6 +118,9 @@ function GS.registerEvents(callbacks)
             registry[f](...)
             if f == "draw" then
                 return handleDraw(...)
+            elseif f == "update" then
+                dt = ...
+                return GS[f](math.min(dt, 1/60))
             end
             return GS[f](...)
         end

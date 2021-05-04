@@ -41,17 +41,16 @@ collisions.ceil = function(this, other)
 end
 
 collisions.passive = function(this, other)
-
-end
-
-local function onUpdate(state, this, dt)
-
+    if other.name:is("key") then
+        this:getWorld():emit("addKey", 1)
+        this:getWorld():removeEntity(other)
+    end
 end
 
 --[[
 ladders should be passive if colliding, and:
 - have no ladder object
-- not passive
+- we are below the ladder
 --]]
 local function mask(this, other)
     if other.name.value == "tile" then
@@ -64,6 +63,8 @@ local function mask(this, other)
             end
             return "slide"
         end
+    elseif other.name:is("key") then
+        return "cross"
     end
 end
 
@@ -117,6 +118,7 @@ local function Player(entity, screen, x, y)
     :give("state", "idle")
     :give("collision", collisions)
     :give("animation", playerTexure, playerQuads)
+    :give("inventory")
 end
 
 return Player

@@ -1,5 +1,7 @@
 local Object = require("libraries.classic")
+
 local Map = Object:extend()
+Map.Player = nil
 
 local camera = require("libraries.camera")
 
@@ -19,18 +21,10 @@ concord.utils.loadNamespace("data/components")
 local entities = {}
 concord.utils.loadNamespace("data/entities", entities)
 
---[[
-    TODO:
-
-    Entity Loading
-    Player
-]]
-
 local DEBUG_DRAW = false
 
 function Map:new(name, size, layers, properties)
-    self.width  = size.width
-    self.height = size.height
+    self.size = size
 
     self.player = nil
     self.camera = camera(0, 0, 1.50, 0)
@@ -40,6 +34,7 @@ function Map:new(name, size, layers, properties)
     self.tiles = love.graphics.newImage("data/maps/" .. name .. ".png")
 
     self.screen = name:find("bottom") and "bottom" or "top"
+    self.offset = name:find("bottom") and -8 or 0
 
     self.background = properties.background and backgrounds[properties.background] or backgrounds.cave
     self.windowSize = name:find("bottom") and vars.BOT_SCREEN_SIZE or vars.TOP_SCREEN_SIZE
@@ -60,10 +55,13 @@ function Map:loadEntities(layerData)
         local properties   = entityData.properties
 
         if name == "tile" then
-            entity:assemble(entities.tile,   self.screen, entityData.x, entityData.y, entityData.width, entityData.height, properties)
+            entity:assemble(entities.tile,   self.screen, entityData.x + self.offset, entityData.y, entityData.width, entityData.height, properties)
+            print(self.screen, entityData.x + self.offset, entityData.x + self.offset + entityData.width)
         elseif name == "spawn" then
-            entity:assemble(entities.player, self.screen, entityData.x, entityData.y)
+            entity:assemble(entities.player, self.screen, entityData.x + self.offset, entityData.y)
             self:setCameraTarget(entity)
+        elseif name == "key" then
+            entity:assemble(entities.key, self.screen, entityData.x, entityData.y + (16 - 13) * 0.5)
         end
 
         table.insert(self.entities, entity)
@@ -81,10 +79,17 @@ function Map:setCameraTarget(target)
     self.target = target
 end
 
-local target = {}
+function Map:getSize()
+    return self.size
+end
+
+function Map:getPlayer()
+    return Map.Player
+end
+
 function Map:updateCamera()
     if not self.target then
-        self.camera:lookAt((self.width - self.camera.x) / 2, (self.height - self.camera.y) / 2)
+        self.camera:lookAt((self.size.width - self.camera.x) / 2, (self.size.height - self.camera.y) / 2)
         return
     end
 
@@ -92,13 +97,11 @@ function Map:updateCamera()
         return
     end
 
-    local s = 1 / self.camera.scale -- zoom or scale of the camera
-
     local wvw, wvh = self.windowSize.width / (2 * self.camera.scale), self.windowSize.height / (2 * self.camera.scale)
     local dx, dy = self.target.position.x - self.camera.x, self.target.position.y - self.camera.y
 
-    self.camera.x = math.clamp(self.camera.x + dx / 2, 0 + wvw, self.width  - wvw)
-    self.camera.y = math.clamp(self.camera.y + dy / 2, 0 + wvh, self.height - wvh)
+    self.camera.x = math.clamp(self.camera.x + dx / 2, 0 + wvw, self.size.width  - wvw)
+    self.camera.y = math.clamp(self.camera.y + dy / 2, 0 + wvh, self.size.height - wvh)
 end
 
 function Map:update(dt)
@@ -115,7 +118,7 @@ function Map:draw(wrapper)
     self.camera:attach()
 
     love.graphics.draw(self.background)
-    love.graphics.draw(self.tiles)
+    love.graphics.draw(self.tiles, self.offset)
 
     if DEBUG_DRAW then
         self:debugDraw()
