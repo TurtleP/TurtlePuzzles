@@ -126,8 +126,8 @@ function Physics:resolveScreenChange(entity, dt)
                 tiled.getMap("top"):setCameraTarget(entity)
             end
             screen:set("top", function()
-                self.world:update(entity, entity.position:x() + offset, 240 - size:height())
-                position:set(position:x() + offset, 240 - size:height())
+                self.world:update(entity, entity.position:x() + (offset + 8), 240 - size:height())
+                position:set(position:x() + (offset + 8), 240 - size:height())
                 pass = true
             end)
         end

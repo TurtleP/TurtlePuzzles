@@ -1,16 +1,24 @@
+local gamestate = require "gamestate"
 local game = {}
 
 local tiled = require("libraries.tiled").init()
 
 local concord = require("libraries.concord")
 
-local core = require("data.core")
-local textures = core.textures
+-- load components
+local items = { "", "/physics", "/properties", "/render",
+                "/other" }
 
+for _, namespace in ipairs(items) do
+    concord.utils.loadNamespace("data/components" .. namespace)
+end
+
+-- load systems
 local systems = {}
 concord.utils.loadNamespace("data/systems", systems)
 
-local player = nil
+-- singleton entity
+local gameState = concord.entity():give("gamestate")
 
 function game:enter(_, map)
     tiled.loadMap(map)
@@ -28,8 +36,12 @@ function game:enter(_, map)
         end
     end
 
-    local systems = {systems.debug, systems.controller, systems.animation, systems.state, systems.interface}
-    self.world:addSystems(unpack(systems))
+    self.world:addEntity(gamestate)
+
+    local worldSystems = { systems.debug, systems.controller, systems.sprite,
+                           systems.animation, systems.interface }
+
+    self.world:addSystems(unpack(worldSystems))
 end
 
 function game:update(dt)

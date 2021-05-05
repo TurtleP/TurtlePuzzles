@@ -118,7 +118,8 @@ local function Player(entity, screen, x, y)
     :give("controller")
     :give("state", "idle")
     :give("collision", collisions)
-    :give("animation", playerTexure, playerQuads)
+    :give("animation")
+    :give("sprite", playerTexure, playerQuads)
     :give("inventory")
 end
 

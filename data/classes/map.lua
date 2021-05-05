@@ -14,7 +14,6 @@ backgrounds.cave = love.graphics.newImage(assetPath .. "/cave.png")
 backgrounds.lava = love.graphics.newImage(assetPath .. "/lava.png")
 
 local concord = require("libraries.concord")
-concord.utils.loadNamespace("data/components")
 
 local entities = {}
 concord.utils.loadNamespace("data/entities", entities)

@@ -4,27 +4,29 @@ local __NULL__ = function(_, _)
 end
 
 local State = concord.component("state", function(component, default)
-    component.current = default or "" -- default?
-    component.direction = 1
-
-    component.storedData = nil
+    component._current = default or "" -- default?
+    component._direction = 1
 end)
 
-function State:store(entity)
-    self.storedData = {entity.velocity.x, entity.velocity.y, entity.state.current}
+function State:current()
+    return self._current
 end
 
-function State:pop(entity)
-    if not self.storedData then
-        return
+function State:set(to, shouldLock)
+    if self:current() ~= to and not self:isLocked() then
+        self._current = to
+        self:lock(to, shouldLock)
     end
-    entity.velocity.x = self.storedData[1]
-    entity.state:set(self.storedData[3])
+    return self
+end
+
+function State:direction()
+    return self._direction
 end
 
 function State:setDirection(direction)
-    if self.direction ~= direction then
-        self.direction = direction
+    if self._direction ~= direction then
+        self._direction = direction
     end
 end
 
@@ -48,27 +50,17 @@ function State:isLocked()
 end
 
 function State:is(name)
-    return self.current == name
+    return self:current() == name
 end
 
 function State:isAnyOf(...)
     local arg = {...}
     for index = 1, #arg do
-        if self.current == arg[index] then
+        if self:current() == arg[index] then
             return true
         end
     end
     return false
-end
-
-function State:set(to, shouldLock)
-    local before = self.current
-
-    if self.current ~= to and not self:isLocked() then
-        self.current = to
-        self:lock(to, shouldLock)
-    end
-    return self
 end
 
 return State
