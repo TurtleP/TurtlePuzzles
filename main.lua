@@ -1,5 +1,7 @@
 local nest = require "libraries.nest"
-nest.load(nest.flags.USE_CTR_WITH_KEYBOARD)
+if nest and nest.load then
+    nest.load(nest.flags.USE_CTR_WITH_KEYBOARD)
+end
 
 require("libraries.batteries"):export()
 
@@ -18,15 +20,24 @@ function love.load()
     love.math.random(); love.math.random()
 
     state.switch("game", "test")
-    save.initFile(1, {name = "test"})
 end
 
 function love.update(dt)
     save.update(dt)
+    state.update(dt)
+end
+
+function love.draw(screen)
+    state.draw(screen)
 end
 
 function love.gamepadpressed(joystick, button)
-    if button == "select" then
+    if button == "back" then
         love.event.quit()
     end
+    state.gamepadpressed(joystick, button)
+end
+
+function love.gamepadaxis(joystick, axis, value)
+    state.gamepadaxis(joystick, axis, value)
 end

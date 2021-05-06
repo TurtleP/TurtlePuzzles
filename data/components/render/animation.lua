@@ -1,8 +1,10 @@
 local concord = require("libraries.concord")
 
-local Animation = concord.component("animation", function(component)
+local Animation = concord.component("animation", function(component, rate)
     component._time  = 0
     component._index = 1
+
+    component._rate = rate or 8
 
     component.locked = false
 end)
@@ -24,6 +26,10 @@ end
 
 function Animation:index()
     return self._index
+end
+
+function Animation:rate()
+    return self._rate
 end
 
 function Animation:reset()

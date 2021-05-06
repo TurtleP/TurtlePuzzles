@@ -13,3 +13,5 @@ end
 function GameStateSystem:draw()
 
 end
+
+return GameStateSystem

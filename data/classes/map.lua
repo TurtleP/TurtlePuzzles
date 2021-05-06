@@ -22,7 +22,9 @@ function Map:new(name, size, layers, properties)
     self.size = size
 
     self.player = nil
-    self.camera = camera(0, 0, 1.50, 0)
+
+    local zoom = 1.50
+    self.camera = camera(0, 0, zoom, 0)
 
     -- dummy this
 
@@ -51,7 +53,6 @@ function Map:loadEntities(layerData)
 
         if name == "tile" then
             entity:assemble(entities.tile,   self.screen, entityData.x + self.offset, entityData.y, entityData.width, entityData.height, properties)
-            print(self.screen, entityData.x + self.offset, entityData.x + self.offset + entityData.width)
         elseif name == "spawn" then
             entity:assemble(entities.player, self.screen, entityData.x + self.offset, entityData.y)
             self:setCameraTarget(entity)

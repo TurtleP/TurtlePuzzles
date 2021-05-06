@@ -1,7 +1,7 @@
 local collisions = {}
 
 collisions.floor = function(this, other)
-    if this.state:isAnyOf("jump") then
+    if this.state:is("jump") then
         this.state:unlock()
     end
 
@@ -59,7 +59,7 @@ local function mask(this, other)
             return "slide"
         else
             local position = this.position
-            if this.controller:isOnLadder() or position:y() > other.position:y() then
+            if this.controller:isOnLadder() or position:y() >= other.position:y() then
                 return "cross"
             end
             return "slide"

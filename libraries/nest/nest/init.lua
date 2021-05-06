@@ -31,7 +31,7 @@ local nest =
 }
 
 if love._console_name then
-    return
+    return nest
 end
 
 -- config flags

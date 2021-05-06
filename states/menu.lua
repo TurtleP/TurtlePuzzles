@@ -103,7 +103,7 @@ function menu:drawBottom()
     love.graphics.setColor(1, 1, 1, 1)
 end
 
-function menu:gamepadpressed(_, button)
+function menu:gamepadpressed(button)
     if self.startGame or self.inputName then
         return
     end
@@ -131,7 +131,7 @@ function menu:gamepadpressed(_, button)
     end
 end
 
-function menu:leave()
+function menu:exit()
     self.backdrops = nil
     self.clouds = nil
     self.saveFiles = nil

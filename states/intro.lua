@@ -24,8 +24,4 @@ function intro:drawTop(depth)
     end
 end
 
-function intro:leave()
-
-end
-
 return intro

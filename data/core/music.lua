@@ -30,6 +30,7 @@ function music.play(name)
     if music.current then
         music.current:stop()
     end
+
     music.current = music[name]
     music[name]:play()
 end

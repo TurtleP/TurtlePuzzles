@@ -4,16 +4,15 @@ local bump    = require("libraries.bump")
 local tiled   = require("libraries.tiled")
 
 local Physics = concord.system({pool = {"position", "size"}})
+local world   = bump.newWorld(16)
 
 function Physics:init()
-    self.world = bump.newWorld(16)
-
     self.pool.onEntityAdded = function(_, entity)
-        self.world:add(entity, entity.position:x(), entity.position:y(), entity.size:width(), entity.size:height())
+        world:add(entity, entity.position:x(), entity.position:y(), entity.size:width(), entity.size:height())
     end
 
     self.pool.onEntityRemoved = function(_, entity)
-        self.world:remove(entity)
+        world:remove(entity)
     end
 
     self.speedFactor = 1
@@ -49,7 +48,7 @@ function Physics:update(dt)
     dt = dt / self.speedFactor
     for _, entity in ipairs(self.pool) do
         -- check the entity exists or something
-        if not self.world:hasItem(entity) then
+        if not world:hasItem(entity) then
             return
         end
 
@@ -66,7 +65,7 @@ function Physics:update(dt)
             local ax, ay, collisions, len
             if entity:has("velocity") then
                 if not self:resolveScreenChange(entity, dt) then
-                    ax, ay, collisions, len = self.world:move(entity, entity.position:x() + entity.velocity.x * dt, entity.position:y() + entity.velocity.y * dt, screenFilter)
+                    ax, ay, collisions, len = world:move(entity, entity.position:x() + entity.velocity.x * dt, entity.position:y() + entity.velocity.y * dt, screenFilter)
                 end
             end
 
@@ -74,9 +73,9 @@ function Physics:update(dt)
             if len and len > 0 then
                 for index = 1, #collisions do
                     if not collisions[index].other:has("passive") then
-                        if collisions[index].normal.y ~= 0 then
+                        if collisions[index].normalY ~= 0 then
                             self:resolveVertical(entity, collisions[index])
-                        elseif collisions[index].normal.x ~= 0 then
+                        elseif collisions[index].normalX ~= 0 then
                             self:resolveHorizontal(entity, collisions[index])
                         end
                     else
@@ -93,6 +92,14 @@ function Physics:update(dt)
     end
 end
 
+function queryWorld(x, y, width, height, filter)
+    local entities, len = world:queryRect(x, y, width, height, filter)
+
+    if len > 0 then
+        return entities
+    end
+end
+
 function Physics:resolveScreenChange(entity, dt)
     if not entity:has("velocity") then
         return
@@ -106,7 +113,7 @@ function Physics:resolveScreenChange(entity, dt)
     local pass = false
     local offset = 40
     if position:x() < 160 then
-        offset = 0
+        offset = 8
     end
 
     if position:y() > tiled.getSize(screen.name).height then
@@ -115,7 +122,7 @@ function Physics:resolveScreenChange(entity, dt)
                 tiled.getMap("bottom"):setCameraTarget(entity)
             end
             screen:set("bottom", function()
-                self.world:update(entity, entity.position:x() - offset, 0)
+                world:update(entity, entity.position:x() - offset, 0)
                 position:set(position:x() - offset, 0)
                 pass = true
             end)
@@ -126,8 +133,8 @@ function Physics:resolveScreenChange(entity, dt)
                 tiled.getMap("top"):setCameraTarget(entity)
             end
             screen:set("top", function()
-                self.world:update(entity, entity.position:x() + (offset + 8), 240 - size:height())
-                position:set(position:x() + (offset + 8), 240 - size:height())
+                world:update(entity, entity.position:x() + offset, 240 - size:height())
+                position:set(position:x() + offset, 240 - size:height())
                 pass = true
             end)
         end

@@ -11,7 +11,7 @@ local __PLAYER__       = nil
 local __PUNCH_TIMER__  = nil
 
 local __PLAYER_SPEED__      = 75
-local __PLAYER_JUMP_SPEED__ = -160
+local __PLAYER_JUMP_SPEED__ = -120
 
 local controller = nil
 local state      = nil
@@ -104,18 +104,18 @@ function PlayerControllerSystem:update(dt)
     end
 
     -- ladder movements -- check bottom first
-    local result = tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y(),     size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
-    if #result == 0 then
-        result =   tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y() + 1, size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
-    end
+    -- local result = tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y(),     size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
+    -- if #result == 0 then
+    --     result =   tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y() + 1, size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
+    -- end
 
-    if #result == 0 then
-        self:dropLadder()
-    else
-        if result[1]:has("climbable") then
-            self:checkLadder(result[1])
-        end
-    end
+    -- if #result == 0 then
+    --     self:dropLadder()
+    -- else
+    --     if result[1]:has("climbable") then
+    --         self:checkLadder(result[1])
+    --     end
+    -- end
 
     local yspeed = 0
     if state:is("climb") then
@@ -200,15 +200,11 @@ function PlayerControllerSystem:gamepadpressed(button)
         state:set("punch", true)
         sound.play("charge")
 
-        velocity:setX(100 * state.direction)
+        velocity:setX(100 * state:direction())
 
         __PUNCH_TIMER__ = timer:new(1, nil, function()
             state:unlock()
         end)
-    elseif button == "x" then
-        position:set(position:getX() - 40, -200)
-        tiled.getMap("bottom"):setCameraTarget(__PLAYER__)
-        screen:set("bottom")
     end
 end
 

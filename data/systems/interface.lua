@@ -42,7 +42,7 @@ function UISystem:gamepadpressed(button)
 end
 
 function UISystem:pause()
-    self.paused = not self.pausedd
+    self.paused = not self.paused
 end
 
 function UISystem:update(dt)
@@ -52,6 +52,22 @@ function UISystem:update(dt)
 
     self.livesTween:update(dt)
     self.livesTimer:update(dt)
+end
+
+function UISystem:drawKeys(count)
+    local width  = textures.game.key:getWidth()  + fonts.ui:getWidth(count) + 14
+    local height = textures.game.key:getHeight() + 10
+
+    local x = love.graphics.getWidth()  - (width  + 4)
+    local y = love.graphics.getHeight() - (height + 4)
+
+    love.graphics.setColor(0, 0, 0, 0.50)
+    love.graphics.rectangle("fill", x, y, width, height, 4, 4)
+
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(textures.game.key, x + 2, y + 1, math.pi / 4, 1, 1, -4, 4)
+
+    love.graphics.print(count, fonts.ui, x + textures.game.key:getWidth() + 7, y + (height - fonts.ui:getHeight()) / 2 + 1)
 end
 
 function UISystem:draw(screen, depth)
@@ -70,19 +86,12 @@ function UISystem:draw(screen, depth)
         love.graphics.print(inventory:getLives(), fonts.ui, 8 + textures.game.lives:getWidth() + 8, (self.livesPosition + 2) + (textures.game.key:getHeight() / 2) - fonts.ui:getHeight() / 2)
 
         -- draw key count
-        love.graphics.translate(love.graphics.getWidth() * 0.88, love.graphics.getHeight() * 0.85)
 
-        love.graphics.draw(textures.game.key, 8, 8, math.pi / 4, 1, 1, -4, 4)
-        love.graphics.print(inventory:getKeys(), fonts.ui, 8 + textures.game.key:getWidth() + 4, (12 + textures.game.key:getHeight() / 2) - fonts.ui:getHeight() / 2)
 
-        -- render the pause menu
-        if self.paused then
-            love.graphics.push("all")
-            love.graphics.setColor(0, 0, 0, 0.75)
-            -- love.graphics.rectangle("fill", )
-
-            love.graphics.pop()
-        end
+        -- love.graphics.draw(textures.game.key, 8, 8, math.pi / 4, 1, 1, -4, 4)
+        -- love.graphics.print(inventory:getKeys(), fonts.ui, 8 + textures.game.key:getWidth() + 4, (12 + textures.game.key:getHeight() / 2) - fonts.ui:getHeight() / 2)
+        self:drawKeys(inventory:getKeys())
+        love.graphics.setColor(1, 1, 1, 1)
     end
     love.graphics.pop()
 

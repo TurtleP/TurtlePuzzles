@@ -1,4 +1,3 @@
-local gamestate = require "gamestate"
 local game = {}
 
 local tiled = require("libraries.tiled").init()
@@ -20,7 +19,7 @@ concord.utils.loadNamespace("data/systems", systems)
 -- singleton entity
 local gameState = concord.entity():give("gamestate")
 
-function game:enter(_, map)
+function game:enter(map)
     tiled.loadMap(map)
 
     self.world = concord.world()
@@ -36,9 +35,9 @@ function game:enter(_, map)
         end
     end
 
-    self.world:addEntity(gamestate)
+    -- self.world:addEntity(gameState)
 
-    local worldSystems = { systems.debug, systems.controller, systems.sprite,
+    local worldSystems = { systems.controller, systems.sprite,
                            systems.animation, systems.interface }
 
     self.world:addSystems(unpack(worldSystems))
@@ -53,6 +52,7 @@ function game:drawTop(depth)
     tiled.drawTop(function()
         self.world:emit("draw", "top", depth)
     end)
+    love.graphics.print(love.timer.getFPS(), love.graphics.getWidth() - love.graphics.getFont():getWidth(love.timer.getFPS()))
 end
 
 function game:drawBottom()
@@ -61,15 +61,15 @@ function game:drawBottom()
     end)
 end
 
-function game:gamepadpressed(_, button)
+function game:gamepadpressed(button)
     self.world:emit("gamepadpressed", button)
 end
 
-function game:gamepadaxis(_, axis, value)
+function game:gamepadaxis(axis, value)
     self.world:emit("gamepadaxis", axis, value)
 end
 
-function game:leave()
+function game:exit()
 
 end
 

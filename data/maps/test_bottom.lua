@@ -1,7 +1,7 @@
 return {
-  version = "1.4",
+  version = "1.5",
   luaversion = "5.1",
-  tiledversion = "1.4.2",
+  tiledversion = "1.6.0",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 20,
@@ -34,7 +34,7 @@ return {
         height = 16
       },
       properties = {},
-      terrains = {},
+      wangsets = {},
       tilecount = 418,
       tiles = {}
     }
@@ -52,6 +52,8 @@ return {
       opacity = 1,
       offsetx = 0,
       offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
       properties = {},
       encoding = "lua",
       data = {
@@ -84,6 +86,8 @@ return {
       opacity = 1,
       offsetx = 0,
       offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
       properties = {},
       encoding = "lua",
       data = {
@@ -109,10 +113,12 @@ return {
       draworder = "topdown",
       id = 2,
       name = "entities",
-      visible = true,
+      visible = false,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
       properties = {},
       objects = {
         {

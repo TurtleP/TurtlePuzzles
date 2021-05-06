@@ -1,10 +1,7 @@
 local concord = require("libraries.concord")
 
-local __NULL__ = function(_, _)
-end
-
 local State = concord.component("state", function(component, default)
-    component._current = default or "" -- default?
+    component._current = default
     component._direction = 1
 end)
 

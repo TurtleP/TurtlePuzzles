@@ -34,10 +34,7 @@ function Utils.loadNamespace(pathOrFiles, namespace)
        local files = love.filesystem.getDirectoryItems(pathOrFiles)
 
        for _, file in ipairs(files) do
-            local fileInfo = love.filesystem.getInfo(pathOrFiles .. "/" .. file)
-
-            if fileInfo.type == "file" then
-                print(pathOrFiles, file)
+            if file:sub(-4) == ".lua" then
                 local name = file:sub(1, #file - 4)
                 local path = pathOrFiles.."."..name
 
