@@ -14,4 +14,5 @@ concord.component("collision", function(component, callbacks)
     component.right   = callbacks.right   or __NULL__
     component.left    = callbacks.left    or __NULL__
     component.passive = callbacks.passive or __NULL__
+    component.global  = callbacks.global  or __NULL__
 end)

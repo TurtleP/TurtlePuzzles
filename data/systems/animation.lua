@@ -8,9 +8,9 @@ function AnimationSystem:updateState(entity, dt)
         return
     else
         quads = entity.sprite:quads()
-        entity.animation:update(rate * dt)
 
         if not entity:has("state") then
+            entity.animation:update(rate * dt)
             entity.animation:setIndex(math.floor(entity.animation:time() % #quads) + 1)
         else
             local current  = entity.state:current()
@@ -21,6 +21,7 @@ function AnimationSystem:updateState(entity, dt)
 
             rate = quads[current .. "Rate"] or 8
 
+            entity.animation:update(rate * dt)
             entity.animation:setIndex(math.floor(entity.animation:time() % #quads[current]) + 1)
 
             if quads[current .. "StopAtEnd"] and entity.animation:index() == #quads[current] then

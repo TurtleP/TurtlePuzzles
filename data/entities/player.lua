@@ -8,6 +8,7 @@ collisions.floor = function(this, other)
     if other:has("climbable") then
         if this.position:y() < other.position:y() then
             if this.controller:moving("down") or this.controller:isOnLadder() then
+                this:getWorld():emit("checkLadder", other)
                 return true
             end
         else
@@ -16,26 +17,39 @@ collisions.floor = function(this, other)
             end
         end
     else
-        this.controller:setLadder(nil)
+        if not this.controller:moving("up") then
+            this:getWorld():emit("dropLadder")
+        end
     end
 
     return false
 end
 
 collisions.left = function(this, other)
-    if other:has("climbable") then
+    if collisions.global(this, other) then
         return true
     end
 end
 
 collisions.right = function(this, other)
-    if other:has("climbable") then
+    if collisions.global(this, other) then
         return true
     end
 end
 
 collisions.ceil = function(this, other)
+    if collisions.global(this, other) then
+        return true
+    end
+end
+
+collisions.global = function(this, other)
     if other:has("climbable") then
+        if this.position:y() > other.position:y() then
+            if this.controller:moving("up") or this.controller:isOnLadder() then
+                this:getWorld():emit("checkLadder", other)
+            end
+        end
         return true
     end
 end
@@ -44,6 +58,12 @@ collisions.passive = function(this, other)
     if other.name:is("key") then
         this:getWorld():emit("addKey", 1)
         this:getWorld():removeEntity(other)
+    elseif other:has("climbable") then
+        if this.position:y() + this.size:height() / 2 <= other.position:y() then
+            if this.controller:moving("up") then
+                this:getWorld():emit("dropLadder")
+            end
+        end
     end
 end
 

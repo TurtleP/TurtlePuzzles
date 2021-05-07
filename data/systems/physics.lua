@@ -79,7 +79,9 @@ function Physics:update(dt)
                             self:resolveHorizontal(entity, collisions[index])
                         end
                     else
-                        entity.collision.passive(entity, collisions[index].other)
+                        if entity.collision.passive then
+                            entity.collision.passive(entity, collisions[index].other)
+                        end
                     end
                 end
             end

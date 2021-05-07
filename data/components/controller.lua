@@ -1,8 +1,6 @@
 local concord = require("libraries.concord")
 local core    = require("data.core")
 
-local sound = core.sounds
-
 local PlayerController = concord.component("controller", function(component)
     local move = {"left", "right", "up", "down"}
     for _, value in ipairs(move) do
@@ -17,6 +15,7 @@ end)
 -- Set @direction (string) to @move (bool)
 function PlayerController:move(direction, move)
     assert:type(direction, "string")
+    assert:type(self[direction], "boolean")
     assert:type(move, "boolean")
 
     self[direction] = move

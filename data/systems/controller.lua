@@ -60,9 +60,11 @@ function PlayerControllerSystem:checkLadder(ladder)
             -- are we moving on it
             if controller:moving("up") or controller:moving("down") then
                 velocity:setGravity(0)
+
                 if not state:is("climb") then
                     state:unlock()
                 end
+
                 state:set("climb", true)
                 controller:setLadder(ladder)
                 ladder:give("passive")
@@ -103,28 +105,16 @@ function PlayerControllerSystem:update(dt)
         end
     end
 
-    -- ladder movements -- check bottom first
-    -- local result = tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y(),     size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
-    -- if #result == 0 then
-    --     result =   tiled.checkRectangle(__PLAYER__.screen.name, position:x(), position:y() + 1, size:width(), size:height(), {{"exclude", __PLAYER__}, "tile"})
-    -- end
-
-    -- if #result == 0 then
-    --     self:dropLadder()
-    -- else
-    --     if result[1]:has("climbable") then
-    --         self:checkLadder(result[1])
-    --     end
-    -- end
-
     local yspeed = 0
     if state:is("climb") then
         local ladder = controller:getLadder()
+
         if not ladder then
             self:dropLadder()
             state:unlock()
             return
         end
+
         position:set(ladder.position:x() + (ladder.size:width() - size:width()) * 0.5)
 
         if controller:moving("up") then
